@@ -91,10 +91,26 @@ if __name__ == "__main__":
         pass
     atexit.register(readline.write_history_file, histfile)
 
+    expressions = Expressions()
+
+    # the auto-completer
+    def completer(text, state):
+        # look through the environment names
+        for name in expressions.expressions.iterkeys():
+            if name.startswith(text):
+                if state <= 0:
+                    return name
+                state -= 1
+        # look through the math module names
+        for name in dir(math):
+            if name.startswith(text):
+                if state <= 0:
+                    return name
+                state -= 1
+
     readline.parse_and_bind("tab: complete")
     readline.parse_and_bind("set blink-matching-paren on")
-
-    expressions = Expressions()
+    readline.set_completer(completer)
 
     while True:
         try:
