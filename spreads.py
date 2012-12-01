@@ -5,8 +5,11 @@ from __future__ import division
 
 import atexit
 import math
+import re
 import readline
 import os
+
+IDENTIFIER_RE = re.compile(r'^[a-zA-Z_]\w*$')
 
 class Expressions(object):
 
@@ -23,19 +26,21 @@ class Expressions(object):
         else:
             return "%s => %s" % (expression, value)
 
-    def update(self, name):
-        "Updates just the expression with given name"
-
-        expression = self.expressions[name]
+    def evaluate(self, expression):
+        "Return the evaluated value of the expression in this context"
         if type(expression) == str:
             # try to parse the expression. if an error is found,
             # just ignore and use the unevaluated form
             try:
-                self.values[name] = eval(expression, math.__dict__, self.values)
+                return eval(expression, math.__dict__, self.values)
             except:
-                self.values[name] = expression
+                return expression
         else:
-            self.values[name] = expression
+            return expression
+
+    def update(self, name):
+        "Updates just the expression with given name"
+        self.values[name] = self.evaluate(self.expressions[name])
 
     def __setitem__(self, name, expression):
         """
@@ -122,15 +127,22 @@ if __name__ == "__main__":
                 if len(words) != 2:
                     raise Exception('Error: query format shoule be "<name>?"')
                 name = words[0].strip()
+                if not IDENTIFIER_RE.match(name):
+                    raise Exception('Left hand of attribution should be a valid identifier')
                 try:
                     print expressions[name]
                 except KeyError:
                     raise Exception('"%s" is not defined' % name)
-            elif text:
+
+            elif IDENTIFIER_RE.match(text):
+                # input is an identifier
                 try:
                     print expressions.values[text]
                 except KeyError:
                     raise Exception('"%s" is not defined' % text)
+            elif text:
+                # input is an expression: evaluates and print output
+                print expressions.evaluate(text)
 
         except EOFError:
             break
