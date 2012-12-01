@@ -106,14 +106,19 @@ if __name__ == "__main__":
             if text.startswith('del'):
                 words = text.split()
                 if len(words) != 2:
-                    raise Exception('Error: del form should be "del <name>"')
-                expressions.__delitem__(words[1])
+                    raise Exception('Error: del form should be "del <name>".')
+                name = words[1].strip()
+                if not IDENTIFIER_RE.match(name):
+                    raise Exception('Error: <name> in "del <name>" should be a valid identifier.')
+                expressions.__delitem__(name)
             # if text has a "=", then it's an attribution
             elif '=' in text:
                 words = text.split('=')
                 if len(words) != 2:
-                    raise Exception('Error: attribution form should be "<name> = <expression>"')
+                    raise Exception('Error: attribution form should be "<name> = <expression>".')
                 name, expression = words[0].strip(), words[1].strip()
+                if not IDENTIFIER_RE.match(name):
+                    raise Exception('Error: Left hand of attribution should be a valid identifier.')
                 expressions[name] = expression
                 value = str(expressions.values[name])
                 if value != expression:
@@ -129,7 +134,7 @@ if __name__ == "__main__":
                     raise Exception('Error: query format should be "<name>?"')
                 name = words[0].strip()
                 if not IDENTIFIER_RE.match(name):
-                    raise Exception('Left hand of attribution should be a valid identifier')
+                    raise Exception('Error: queried name should be a valid identifier.')
                 try:
                     print expressions[name]
                 except KeyError:
