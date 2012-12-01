@@ -57,6 +57,7 @@ class Expressions(object):
     def __delitem__(self, name):
         del self.expressions[name]
         del self.values[name]
+        self.update_all()
 
     def update_all(self, print_changed=True):
         """
