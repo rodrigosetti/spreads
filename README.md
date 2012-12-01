@@ -36,7 +36,7 @@ with `>> ` are user inputs.
     >>  payment_per_period * 1.08 + 100
     >>  645.9625
 
-The seven kinds of input one can enter are:
+The six kinds of input one can enter are:
 
 * Attributions (_e. g._ `x = 2*y`)
 * Remove a value (_e. g._ `del x`)
