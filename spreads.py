@@ -1,7 +1,10 @@
 #! /usr/bin/env python
 # coding: utf-8
 
+from __future__ import division
+
 import atexit
+import math
 import readline
 import os
 
@@ -20,48 +23,45 @@ class Expressions(object):
         else:
             return "%s => %s" % (expression, value)
 
+    def update(self, name):
+        "Updates just the expression with given name"
+
+        expression = self.expressions[name]
+        if type(expression) == str:
+            # try to parse the expression. if an error is found,
+            # just ignore and use the unevaluated form
+            try:
+                self.values[name] = eval(expression, math.__dict__, self.values)
+            except:
+                self.values[name] = expression
+        else:
+            self.values[name] = expression
+
     def __setitem__(self, name, expression):
         """
         Set an expression value, and then update all others to the new
         values.
         """
         self.expressions[name] = expression
-
-        # updates itself
-        if type(expression) == str:
-            # try to parse the expression. if an error is found,
-            # just ignore and use the unevaluated form
-            try:
-                self.values[name] = eval(expression, self.values)
-            except:
-                self.values[name] = expression
-        else:
-            self.values[name] = expression
+        # updates itself first
+        self.update(name)
 
         # update all others
-        self.update()
+        self.update_all()
 
     def __delitem__(self, name):
         del self.expressions[name]
         del self.values[name]
 
-    def update(self, print_changed=True):
+    def update_all(self, print_changed=True):
         """
         Evaluates all expressions to yield the new values within they own
         scope.
         """
-        for name, expression in self.expressions.iteritems():
+        for name in self.expressions:
             before_value = str(self.values[name])
 
-            if type(expression) == str:
-                # try to parse the expression. if an error is found,
-                # just ignore and use the unevaluated form
-                try:
-                    self.values[name] = eval(expression, self.values)
-                except:
-                    self.values[name] = expression
-            else:
-                self.values[name] = expression
+            self.update(name)
 
             value = str(self.values[name])
             if print_changed and before_value != value:
