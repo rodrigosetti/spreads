@@ -126,7 +126,7 @@ if __name__ == "__main__":
             elif text.endswith('?'):
                 words = text.split('?')
                 if len(words) != 2:
-                    raise Exception('Error: query format shoule be "<name>?"')
+                    raise Exception('Error: query format should be "<name>?"')
                 name = words[0].strip()
                 if not IDENTIFIER_RE.match(name):
                     raise Exception('Left hand of attribution should be a valid identifier')
