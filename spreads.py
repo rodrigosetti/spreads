@@ -65,10 +65,7 @@ class Expressions(object):
 
             value = str(self.values[name])
             if print_changed and before_value != value:
-                if expression == value:
-                    print "%s = %s" % (name, expression)
-                else:
-                    print "%s = %s => %s" % (name, expression, value)
+                print "%s = %s" % (name, value)
 
     def show(self):
         for name, expression in self.expressions.iteritems():
@@ -115,11 +112,20 @@ if __name__ == "__main__":
                 value = str(expressions.values[name])
                 if value != expression:
                     print value
-            elif text == '*':
+            elif text == '?':
                 expressions.show()
+            elif text.endswith('?'):
+                words = text.split('?')
+                if len(words) != 2:
+                    raise Exception('Error: query format shoule be "<name>?"')
+                name = words[0].strip()
+                try:
+                    print expressions[name]
+                except KeyError:
+                    raise Exception('"%s" is not defined' % name)
             elif text:
                 try:
-                    print expressions[text]
+                    print expressions.values[text]
                 except KeyError:
                     raise Exception('"%s" is not defined' % text)
 
