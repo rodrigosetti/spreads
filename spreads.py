@@ -65,14 +65,14 @@ class Expressions(object):
 
             value = str(self.values[name])
             if print_changed and before_value != value:
-                print "%s = %s" % (name, value)
+                print "%s => %s" % (name, value)
 
     def show(self):
         for name, expression in self.expressions.iteritems():
             value = str(self.values[name])
 
             if expression == value:
-                print "%s = %s" % (name, expression)
+                print "%s => %s" % (name, expression)
             else:
                 print "%s = %s => %s" % (name, expression, value)
 
@@ -113,6 +113,9 @@ if __name__ == "__main__":
                 if value != expression:
                     print value
             elif text == '?':
+                for name, value in expressions.values.iteritems():
+                    print "%s => %s" % (name, value)
+            elif text == '??':
                 expressions.show()
             elif text.endswith('?'):
                 words = text.split('?')
