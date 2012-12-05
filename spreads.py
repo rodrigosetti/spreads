@@ -11,6 +11,12 @@ import os
 
 IDENTIFIER_RE = re.compile(r'^[a-zA-Z_]\w*$')
 
+def value_to_str(expression):
+    if callable(expression):
+        return "<function>"
+    else:
+        return str(expression)
+
 class Expressions(object):
 
     def __init__(self):
@@ -19,7 +25,7 @@ class Expressions(object):
 
     def __getitem__(self, name):
         expression = str(self.expressions[name])
-        value = str(self.values[name])
+        value = value_to_str(self.values[name])
 
         if expression == value:
             return expression
@@ -65,17 +71,17 @@ class Expressions(object):
         scope.
         """
         for name in self.expressions:
-            before_value = str(self.values[name])
+            before_value = value_to_str(self.values[name])
 
             self.update(name)
 
-            value = str(self.values[name])
+            value = value_to_str(self.values[name])
             if print_changed and before_value != value:
                 print "%s => %s" % (name, value)
 
     def show(self):
         for name, expression in self.expressions.iteritems():
-            value = str(self.values[name])
+            value = value_to_str(self.values[name])
 
             if expression == value:
                 print "%s => %s" % (name, expression)
@@ -136,12 +142,12 @@ if __name__ == "__main__":
                 if not IDENTIFIER_RE.match(name):
                     raise Exception('Error: Left hand of attribution should be a valid identifier.')
                 expressions[name] = expression
-                value = str(expressions.values[name])
+                value = value_to_str(expressions.values[name])
                 if value != expression:
                     print value
             elif text == '?':
                 for name, value in expressions.values.iteritems():
-                    print "%s => %s" % (name, value)
+                    print "%s => %s" % (name, value_to_str(value))
             elif text == '??':
                 expressions.show()
             elif text.endswith('?'):
@@ -172,4 +178,6 @@ if __name__ == "__main__":
             print "\ninterrupt."
         except Exception as e:
             print e.message
+
+    print
 

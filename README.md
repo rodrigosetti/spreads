@@ -45,3 +45,37 @@ The six kinds of input one can enter are:
 * Query about all values: `?`
 * Query about all values and their expressions: `??`
 
+## Advanced Features
+
+Since expressions are actually python expressions, one can use interesting
+features such as lambdas:
+
+    >>  tax_deduction = lambda x: x if x < 1023 else 0.73*x
+    <function>
+    >>  raw_income = 2100
+    >>  after_tax_income = tax_deduction(raw_income)
+    1533.0
+    >>  raw_income = 800
+    after_tax_income => 800
+    >>  raw_income = 1055
+    after_tax_income => 770.15
+    >>  tax_deduction = lambda x: x if x < 1067 else 0.73*x
+    after_tax_income => 1055
+
+## Things to avoid
+
+One may get strange behaviour if the expressions are self-referencing (even if
+indirectly), such as:
+
+    >>  x = 2
+    >>  x = x**2
+    x => 16
+    16
+    >>  y = 10
+    x => 256
+
+Also, when using non-deterministic and other kind of non-functional (_i. e._
+collateral effects such as file reading or networking) expressions.
+
+These are not prohibited expressions, but you are warned!
+
