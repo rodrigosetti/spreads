@@ -71,7 +71,7 @@ after_tax_income => 1055
 One may get strange behaviour if the expressions are self-referencing (even if
 indirectly), such as:
 
-```
+```console
 >>  x = 2
 >>  x = x**2
 x => 16
